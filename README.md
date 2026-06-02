@@ -18,7 +18,7 @@
 graph TD
     CC[Claude Code] -->|Anthropic 格式 / Port 4000| LL[LiteLLM 4000]
     LL -->|OpenAI 格式 / Port 4001| Proxy[Node推理重整代理 4001]
-    Proxy -->|1. 缓存思维链<br>2. 注入历史 CoT<br>3. 修复空消息| LL
+    Proxy -->|1. 缓存思维链2. 注入历史 CoT3. 修复空消息| LL
     LL -->|走系统代理 127.0.0.1:10808| DS[DeepSeek 官方 API]
 ```
 
@@ -26,10 +26,10 @@ graph TD
 
 ## ✨ 项目特性 (Features)
 
-* **零依赖 Node 代理**：[deepseek_reasoning_proxy.js](deepseek_reasoning_proxy.js) 使用 Node.js 原生标准库编写，无需运行 `npm install` 安装任何多余的三方依赖。
-* **一键环境启动**：双击运行 `start-services.bat` 即可全自动读取配置并隐藏启动后台服务。
-* **本地沙盒隔离**：配置有 `start-claude.bat`，自动将 Claude Code 的本地历史和配置文件重定向至项目根目录下的 `claudecode/` 中，不污染系统 C 盘。
-* **多端共享通用**：本地端口可以直接复用于 **Cursor**、**VS Code (Cline / Roo Code / Continue)** 等支持自定义 OpenAI 接口地址的 AI 编程插件。
+- **零依赖 Node 代理**：[deepseek_reasoning_proxy.js](deepseek_reasoning_proxy.js) 使用 Node.js 原生标准库编写，无需运行 `npm install` 安装任何多余的三方依赖。
+- **一键环境启动**：双击运行 `start-services.bat` 即可全自动读取配置并隐藏启动后台服务。
+- **本地沙盒隔离**：配置有 `start-claude.bat`，自动将 Claude Code 的本地历史和配置文件重定向至项目根目录下的 `claudecode/` 中，不污染系统 C 盘。
+- **多端共享通用**：本地端口可以直接复用于 **Cursor**、**VS Code (Cline / Roo Code / Continue)** 等支持自定义 OpenAI 接口地址的 AI 编程插件。
 
 ---
 
@@ -45,26 +45,18 @@ cd claude-code-deepseek-proxy
 pip install "litellm[proxy]"
 ```
 
-### 2. 配置环境变量
+### 2. 一键配置并启动服务
 
-复制根目录下的 `.env.example` 文件并重命名为 `.env`，填入您的密钥和代理端口：
+1. 双击运行项目根目录下的 **`start-services.bat`**。
+2. **首次运行引导**：终端会提示您输入 DeepSeek API Key：
+  `Please enter your DEEPSEEK_API_KEY: `
+  粘贴您自己的 DeepSeek 密钥，按回车即可。脚本会自动在本地创建 `.env` 文件保存它。
+3. **自动代理检测**：脚本会自动读取 Windows 系统的注册表设置，获取您当前的科学上网软件代理端口（如 Clash 的 `7890` 或 v2rayN 的 `10808`），并在内存中自动配置 `HTTP_PROXY` 与 `HTTPS_PROXY`。
 
-```env
-# .env
-# 您的 DeepSeek API Key
-DEEPSEEK_API_KEY=sk-3ce616...
+服务启动后，会在后台拉起：
 
-# 如果您在中国大陆，需要使用本地代理才能连接 DeepSeek 官方 API：
-HTTP_PROXY=http://127.0.0.1:10808
-HTTPS_PROXY=http://127.0.0.1:10808
-```
-
-### 3. 一键启动服务
-
-双击运行项目根目录下的 **`start-services.bat`**。它会在后台分别拉起：
-
-* **Port 4000**: LiteLLM 服务（自动挂载您的代理环境变量，处理对外连接）
-* **Port 4001**: Node.js 推理代理服务（处理思维链注入与消息格式重整）
+- **Port 4000**: LiteLLM 协议转换网关（处理外网代理连接）
+- **Port 4001**: Node.js 推理重整网关（拦截格式报错、缓存流式思维链）
 
 ### 4. 运行 Claude Code
 
@@ -145,16 +137,16 @@ Set-Alias cc cc-deepseek
 
 ### Cursor
 
-* 进入设置 -> Models -> OpenAI
-* 将 `Override Base URL` 设为 `http://localhost:4001/v1`
-* 密钥处任意填写一串字符，并在下方模型列表里添加并勾选 `deepseek-v4-pro-direct`。
+- 进入设置 -> Models -> OpenAI
+- 将 `Override Base URL` 设为 `http://localhost:4001/v1`
+- 密钥处任意填写一串字符，并在下方模型列表里添加并勾选 `deepseek-v4-pro-direct`。
 
 ### VS Code - Cline 插件
 
-* **Provider**: 选择 `OpenAI Compatible`
-* **Base URL**: `http://localhost:4001/v1`
-* **API Key**: 任意填写
-* **Model ID**: `deepseek-v4-pro-direct`
+- **Provider**: 选择 `OpenAI Compatible`
+- **Base URL**: `http://localhost:4001/v1`
+- **API Key**: 任意填写
+- **Model ID**: `deepseek-v4-pro-direct`
 
 ---
 
