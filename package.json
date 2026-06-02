@@ -1,0 +1,20 @@
+{
+  "name": "claude-code-deepseek-proxy",
+  "version": "1.0.0",
+  "description": "A local dual-proxy gateway (LiteLLM + Node Proxy) to connect Claude Code and Cursor/Cline to DeepSeek API with full reasoning/thinking mode support, fixing the 'Invalid assistant message' 400 Bad Request error.",
+  "main": "deepseek_reasoning_proxy.js",
+  "type": "module",
+  "scripts": {
+    "start": "node deepseek_reasoning_proxy.js"
+  },
+  "keywords": [
+    "claude-code",
+    "deepseek",
+    "litellm",
+    "proxy",
+    "reasoning",
+    "thinking"
+  ],
+  "author": "",
+  "license": "MIT"
+}
